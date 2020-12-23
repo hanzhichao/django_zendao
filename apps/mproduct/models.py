@@ -62,15 +62,6 @@ class ProductModule(InlineModel, WithProductBranch, WithParent):
         verbose_name = "产品模块"
         verbose_name_plural = "产品模块"
 
-    @property
-    def path(self):
-        node, parents = self, [self]
-        while node.parent:
-            parents.append(node.parent)
-            node = node.parent
-        parents.reverse()
-        return '/' + '/'.join([str(item) for item in parents])
-
 
 class WithProductModule(WithProductBranch):
     product_module = models.ForeignKey(
@@ -92,7 +83,7 @@ class ProductVersion(BaseModel, WithProductBranch):
         related_name="%(app_label)s_%(class)s_builder",
         verbose_name="构建者", on_delete=models.PROTECT
     )
-    build_date = models.DateField('打包日期', null=True)
+    build_date = models.DateField('打包日期', blank=True, null=True)
     code_repo = models.CharField('源代码地址', max_length=200, blank=True, null=True)
     download_url = models.CharField('下载地址', max_length=200, blank=True, null=True)
 
@@ -102,8 +93,13 @@ class ProductVersion(BaseModel, WithProductBranch):
 
 
 class ProductRelease(InlineModel):
+    RELEASE_STATUS_CHOICES = (('ok', '正常'), ('停止维护', '停止维护'))
+
     product_version = models.ForeignKey(ProductVersion, verbose_name='所属版本',
                                         related_name="%(app_label)s_%(class)s_product_version", **NULLABLE_FK)
+    release_date = models.DateField('打包日期', blank=True, null=True)
+
+    status = models.CharField('当前状态', max_length=20, choices=RELEASE_STATUS_CHOICES, default='ok')
 
     class Meta(BaseMeta):
         verbose_name = "产品发布"

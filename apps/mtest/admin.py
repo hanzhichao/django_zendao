@@ -6,7 +6,9 @@ from utils.admin_utils import BaseAdmin, BaseTabularInline, BaseRecordAdmin, sho
 
 @admin.register(models.TestPlan)
 class TestPlanAdmin(BaseAdmin):
-    list_display = ('name', 'created', 'modified')
+    list_display = ('name', 'manager','start_date', 'end_date', 'status', 'operations')
+    fields = ('project', 'related_release', 'manager', 'level', ('start_date', 'end_date'), 'status',
+              'name', 'description', 'test_summary', 'cc_to')
 
     class TestPlanCaseInline(BaseTabularInline):
         model = models.TestPlanCase
@@ -16,24 +18,41 @@ class TestPlanAdmin(BaseAdmin):
 
 @admin.register(models.TestCase)
 class TestCaseAdmin(BaseAdmin):
-    list_display = ('name', 'stage', 'level', 'stage', 'tags', 'created', 'modified')
+    list_display = ('level', 'product_branch', 'name', 'type', 'creator', 'operations')
 
     class TestStepInline(BaseTabularInline):
         model = models.TestStep
-        exclude = ('test_project',)
 
-    inlines = [TestStepInline]
+    class TestAttachmentInline(BaseTabularInline):
+        model = models.TestAttachment
+        exclude = ('bug',)
+
+    inlines = [TestStepInline, TestAttachmentInline]
+    fields = (('product', 'product_branch', 'product_module'),
+              ('type', 'stage'),
+              'related_requirement',
+              ('name', 'level'),
+              'pre_condition',
+              'tags',
+              )
 
 
-# @admin.register(models.TestReport)
-# class TestReportAdmin(BaseRecordAdmin):
-#     list_display = ('created', 'test_plan', 'status')
-#     list_display_links = ('created', )
-#
-#     class TestCaseRecordInline(BaseTabularInline):
-#         model = models.TestCaseRecord
-#
-#         def has_add_permission(self, request):
-#             return False
-#
-#     inlines = [TestCaseRecordInline]
+@admin.register(models.Bug)
+class BugAdmin(BaseAdmin):
+    list_display = ('name', 'level', 'severity',  'status', 'creator', 'assignee')
+
+    class TestAttachmentInline(BaseTabularInline):
+        model = models.TestAttachment
+        exclude = ('test_case',)
+
+    inlines = [TestAttachmentInline]
+
+    fields = (('product', 'product_branch', 'product_module'),
+              ('project', 'related_release'),
+              'assignee',
+              ('type', 'platform', 'browser'),
+              ('name', 'severity', 'level'),
+              ('related_requirement', 'related_task'),
+              'tags',
+              'cc_to'
+              )

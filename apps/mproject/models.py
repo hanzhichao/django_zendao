@@ -1,9 +1,7 @@
 from django.db import models
 
 from django.conf import settings
-from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithLevel, WithTags, WithKey,
-                               WithManager, WithWatchers, WithStatus,WithStage, WithType, WithStartEndTime,
-                               WithParent, WithStartEndDate, WithAssignee, NULLABLE_FK
+from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithLevel, WithStartEndDate, WithAssignee, NULLABLE_FK
                                )
 from mproduct.models import Product, ProductModule, WithProductBranch
 
@@ -49,7 +47,7 @@ class Project(BaseModel, WithStartEndDate):
 
     class Meta(BaseMeta):
         verbose_name = "项目"
-        verbose_name_plural = "1.项目"
+        verbose_name_plural = "项目"
 
 
 class WithProject(models.Model):
@@ -101,7 +99,7 @@ class Task(BaseModel, WithProject, WithAssignee, WithLevel, WithStartEndDate):
 
     class Meta(BaseMeta):
         verbose_name = "任务"
-        verbose_name_plural = "4.任务"
+        verbose_name_plural = "任务"
 
 
 class TaskAttachment(InlineModel):

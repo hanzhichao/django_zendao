@@ -14,20 +14,22 @@ from mproject.models import WithProject, Task
 
 
 class TestPlan(BaseModel, WithProject, WithManager, WithLevel, WithStartEndDate):
-    TESTPLAN_STATUS_CHOICES = (('new', '未开始'),
+    TEST_PLAN_STATUS_CHOICES = (('new', '未开始'),
                               ('processing', '进行中'),
                               ('blocked', '被阻碍'),
                               ('done', '完成'))
-    status = models.CharField('当前状态', max_length=20, choices=TESTPLAN_STATUS_CHOICES, default='prod')
+    status = models.CharField('当前状态', max_length=20, choices=TEST_PLAN_STATUS_CHOICES, default='new')
     cc_to = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                    related_name="%(app_label)s_%(class)s_cc_to", verbose_name="抄送给", blank=True)
     related_release = models.ForeignKey(ProductRelease, verbose_name='关联版本',
-                                            related_name="%(app_label)s_%(class)s_related_release", **NULLABLE_FK)
+                                            related_name="%(app_label)s_%(class)s_related_version", **NULLABLE_FK)
 
+    test_summary = models.TextField('测试总结', blank=True, null=True)
     test_cases = models.ManyToManyField('TestCase', verbose_name='用例', blank=True, through='TestPlanCase')
+
     class Meta(BaseMeta):
         verbose_name = '测试计划'
-        verbose_name_plural = '3.测试计划'
+        verbose_name_plural = '测试计划'
 
 
 class TestPlanCase(models.Model):
@@ -44,6 +46,13 @@ class TestPlanCase(models.Model):
     test_start_time = models.DateTimeField("执行时间", default=timezone.datetime.now, editable=True)
     test_result = models.CharField('结果', max_length=20, choices=TEST_RESULT_CHOICES, blank=True, null=True)
     test_status = models.CharField('状态', max_length=20, choices=TEST_STATUS_CHOICES, blank=True, null=True)
+
+    class Meta(BaseMeta):
+        verbose_name = '测试用例'
+        verbose_name_plural = '测试用例'
+
+    def __str__(self):
+        return ''
 
 
 class TestCase(BaseModel, WithProductModule, WithTags, WithLevel):
@@ -68,7 +77,7 @@ class TestCase(BaseModel, WithProductModule, WithTags, WithLevel):
 
     class Meta(BaseMeta):
         verbose_name = '测试用例'
-        verbose_name_plural = '3.测试用例'
+        verbose_name_plural = '测试用例'
 
 
 class TestStep(InlineModel, WithOrder):
@@ -89,7 +98,6 @@ class TestCaseRecord(RecordModel, WithStatus):
         verbose_name_plural = '测试用例记录'
 
 
-
 class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, WithLevel):
     BUG_TYPE_CHOICES = (('code', '代码错误'),
                      ('ui', '界面优化'),
@@ -108,6 +116,11 @@ class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, Wit
         ('centos', 'CentOS'),
         ('ubuntu', 'ubuntu'),
     )
+    BUG_STATUS_CHOICES = (
+        ('new', '激活'),
+        ('resolved', '已解决'),
+        ('closed', '已关闭'),
+    )
 
     BROWSER_CHOICES = (
         ('chrome', 'Chrome'),
@@ -120,6 +133,7 @@ class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, Wit
     severity = models.PositiveSmallIntegerField('严重等级', choices=SEVERITY_CHOICES, default=2)
 
     type = models.CharField('项目类型', max_length=20, choices=BUG_TYPE_CHOICES, default='code')
+    status = models.CharField('状态', max_length=20, choices=BUG_STATUS_CHOICES, default='new')
     platform = models.CharField('操作系统', max_length=20, choices=PLATFORM_CHOICES, default='win10')
     browser = models.CharField('浏览器', max_length=20, choices=BROWSER_CHOICES, default='chrome')
 
@@ -132,8 +146,12 @@ class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, Wit
     cc_to = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                    related_name="%(app_label)s_%(class)s_cc_to", verbose_name="抄送给", blank=True)
 
+    class Meta(BaseMeta):
+        verbose_name = "缺陷"
+        verbose_name_plural = "缺陷"
 
-class Attachment(InlineModel):
+
+class TestAttachment(InlineModel):
     test_case = models.ForeignKey(TestCase, verbose_name='测试用例', related_name='%(app_label)s_%(class)s_test_case', **NULLABLE_FK)
     bug = models.ForeignKey(Bug, verbose_name='Bug', related_name='%(app_label)s_%(class)s_test_case', **NULLABLE_FK)
     file = models.FileField('附件', upload_to='uploads/')

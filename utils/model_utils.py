@@ -220,6 +220,15 @@ class WithParent(models.Model):
     class Meta:
         abstract = True
 
+    @property
+    def path(self):
+        node, parents = self, [self]
+        while node.parent:
+            parents.append(node.parent)
+            node = node.parent
+        parents.reverse()
+        return '/' + '/'.join([str(item) for item in parents])
+
 
 class WithStartEndTime(models.Model):
     start_time = models.DateTimeField("开始时间",
