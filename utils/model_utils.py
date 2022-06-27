@@ -4,12 +4,12 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 import datetime
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_str as force_text
+from django.utils.translation import gettext_lazy as _
 
 # from ckeditor.fields import RichTextField
 # from ckeditor_uploader.fields import RichTextUploadingField
-
+from DjangoUeditor.models import UEditorField
 from taggit.managers import TaggableManager
 
 NULLABLE_FK = dict(blank=True, null=True, on_delete=models.SET_NULL)
@@ -42,8 +42,12 @@ class WithUniqueName(WithName):
 
 
 class WithDesc(models.Model):
-    description = models.TextField('描述', null=True, blank=True)
+    # description = models.TextField('描述', null=True, blank=True)
     # description = RichTextUploadingField(default='', verbose_name='描述', null=True, blank=True)
+    description = UEditorField(default='', verbose_name='描述', null=True, blank=True,
+                               width=800, height=150,
+                               toolbars="mini"
+                               )
 
     class Meta:
         abstract = True

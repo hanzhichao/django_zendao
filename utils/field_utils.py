@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django import forms
 from django.db import models
 from django.core import exceptions
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str as force_text
 from django.core.exceptions import ObjectDoesNotExist
 
 

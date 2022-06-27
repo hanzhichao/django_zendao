@@ -14,9 +14,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
 INSTALLED_APPS = [
-    # 'simpleui',
+    'simpleui',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -30,6 +31,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'import_export',
     'taggit',
+    'DjangoUeditor',
 
     'mdoc',
     'mproduct',
@@ -109,9 +111,13 @@ DATE_FORMAT = 'Y-m-d'
 
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "uploads"),
+)
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/uploads/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

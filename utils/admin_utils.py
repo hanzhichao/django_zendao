@@ -45,7 +45,7 @@ class BaseAdmin(ImportExportModelAdmin, BASE_MODEL_ADMIN):
     def get_list_display(self, request):
         return self.list_display if 'id' in self.list_display else ['id', *self.list_display]
 
-
+ 
     def save_model(self, request, obj, form, change):
         if not obj.pk:  # 创建时
             obj.creator = request.user
@@ -75,5 +75,3 @@ class BaseTabularInline(BASE_TABULAR_INLINE):
 
 class BaseStackedInline(BASE_STACKED_INLINE):
     extra = 0
-
-
