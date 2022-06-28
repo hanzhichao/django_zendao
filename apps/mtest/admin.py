@@ -14,6 +14,7 @@ class TestPlanAdmin(BaseAdmin):
         model = models.TestPlanCase
 
     inlines = [TestPlanCaseInline]
+    filter_horizontal = ('cc_to',)
 
 
 @admin.register(models.TestCase)
@@ -56,3 +57,4 @@ class BugAdmin(BaseAdmin):
               'tags',
               'cc_to'
               )
+    filter_horizontal = ('cc_to',)

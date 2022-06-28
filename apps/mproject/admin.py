@@ -30,5 +30,8 @@ class TaskAdmin(BaseAdmin):
 
     inlines = [TaskAttachmentInline]
 
-    list_display = ('level',  'name', 'status', 'end_date', 'assignee')
-    fields = (('project', 'product_module'), 'name', ('assignee', 'level'), ('type', 'status'),  ('start_date', 'end_date'), 'description', 'cc_to')
+    list_display = ('level', 'name', 'status', 'end_date', 'assignee')
+    fields = (
+    ('project', 'product_module'), 'name', ('assignee', 'level'), ('type', 'status'), ('start_date', 'end_date'),
+    'description', 'cc_to')
+    filter_horizontal = ('cc_to',)

@@ -2,7 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.utils import timezone
-from DjangoUeditor.models import UEditorField
+# from DjangoUeditor.models import UEditorField
+from ckeditor.fields import RichTextField
 
 from utils.field_utils import YamlField
 from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithLevel, WithTags,  WithStatus,WithStage,
@@ -25,7 +26,7 @@ class TestPlan(BaseModel, WithProject, WithManager, WithLevel, WithStartEndDate)
     related_release = models.ForeignKey(ProductRelease, verbose_name='关联版本',
                                             related_name="%(app_label)s_%(class)s_related_version", **NULLABLE_FK)
 
-    test_summary = UEditorField('测试总结', blank=True, null=True)
+    test_summary = RichTextField('测试总结', blank=True, null=True)
     test_cases = models.ManyToManyField('TestCase', verbose_name='用例', blank=True, through='TestPlanCase')
 
     class Meta(BaseMeta):

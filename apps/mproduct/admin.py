@@ -24,12 +24,11 @@ class ProductAdmin(BaseAdmin):
         return obj.mproduct_productrequirement_product.count()
 
     inlines = [ProductBranchInline, ProductModuleInline, ProductPlanInline]
-    fields = ('name', 'key', ('product_manager', 'test_manager', 'release_manager'), 'type', 'description', 'view_control')
+    # fields = ('name', 'key', ('product_manager', 'test_manager', 'release_manager'), 'type', 'description', 'view_control')
 
 
 @admin.register(models.ProductVersion)
 class ProductVersionAdmin(BaseAdmin):
-
     class ProductReleaseInline(BaseTabularInline):
         model = models.ProductRelease
 
@@ -37,9 +36,9 @@ class ProductVersionAdmin(BaseAdmin):
         model = models.ReleasePackage
 
     list_filter = ('product', 'builder')
-    list_display = ('id', 'product', 'name', 'code_repo', 'download_url', 'build_date', 'builder', 'operations')
+    list_display = ('id', 'name', 'product', 'code_repo', 'download_url', 'build_date', 'builder', 'operations')
     inlines = [ProductReleaseInline, ReleasePackageInline]
-    fields = (('product', 'product_branch'), 'name',  ('builder', 'build_date'), 'code_repo', 'download_url', 'description')
+    # fields = (('product', 'product_branch'), 'name',  ('builder', 'build_date'), 'code_repo', 'download_url', 'description')
 
 
 class ProductPlanChoiceField(forms.ModelChoiceField):
@@ -66,18 +65,20 @@ class ProductRequirementAdmin(BaseAdmin):
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-    list_display = ('id', 'level', 'name','product_plan', 'source', 'assignee', 'estimated_time', 'status', 'stage', 'operations')
+    list_display = (
+    'id', 'name', 'level', 'product_plan', 'source', 'assignee', 'estimated_time', 'status', 'stage', 'operations')
     list_filter = ('product_branch', 'product_module', 'status', 'stage', 'assignee', 'reviewer')
-    search_fields = ('name', )
+    search_fields = ('name',)
     inlines = [ProductRequirementAttachmentInline]
     readonly_fields = ('status',)
-    fields = (('product', 'product_branch', 'product_module'),
-              ('product_plan', 'source'),
-              ('reviewer', 'no_need_review'),
-              ('name', 'level', 'estimated_time'),
-              ('status', 'stage', 'assignee'),
-              'description',
-              'acceptance_criteria',
-              'tags',
-              'cc_to',
-              )
+    # fields = (('product', 'product_branch', 'product_module'),
+    #           ('product_plan', 'source'),
+    #           ('reviewer', 'no_need_review'),
+    #           ('name', 'level', 'estimated_time'),
+    #           ('status', 'stage', 'assignee'),
+    #           'description',
+    #           'acceptance_criteria',
+    #           'tags',
+    #           'cc_to',
+    #           )
+    filter_horizontal = ('cc_to',)

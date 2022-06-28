@@ -5,6 +5,7 @@ from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithLevel, With
                                WithParent, WithAssignee, WithType, NULLABLE_FK
                                )
 from django.conf import settings
+from ckeditor.fields import RichTextField
 
 
 class Product(BaseModel):
@@ -152,7 +153,7 @@ class ProductRequirement(BaseModel, WithProductModule, WithLevel, WithAssignee, 
     )
     no_need_review = models.BooleanField('不需要评审', default=True)
     estimated_time = models.PositiveSmallIntegerField('预计耗时(h)', blank=True, null=True)
-    acceptance_criteria = models.TextField('验收标准', blank=True, null=True)
+    acceptance_criteria = RichTextField('验收标准', blank=True, null=True)
     cc_to = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                    related_name="%(app_label)s_%(class)s_cc_to", verbose_name="抄送给", blank=True)
 
