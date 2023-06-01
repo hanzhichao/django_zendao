@@ -7,7 +7,9 @@ from utils.admin_utils import BaseAdmin, BaseTabularInline, BaseRecordAdmin, sho
 @admin.register(models.Bug)
 class BugAdmin(BaseAdmin):
     admin_order = 1
-    list_display = ('name', 'level', 'severity', 'status', 'creator', 'assignee')
+    list_display = ('id', 'name', 'level', 'severity', 'status', 'creator', 'assignee')
+    list_display_links = ('name', )
+    list_filter = ('level', 'severity', 'status', 'creator', 'assignee')
 
     class TestAttachmentInline(BaseTabularInline):
         model = models.TestAttachment
@@ -15,13 +17,12 @@ class BugAdmin(BaseAdmin):
 
     inlines = [TestAttachmentInline]
 
-    fields = (('product', 'product_branch', 'product_module'),
-              ('project', 'related_release'),
-              'assignee',
+    fields = (('product', 'product_module', 'project', 'related_release'),
+              ('name', 'severity', 'level', 'assignee'),
               ('type', 'platform', 'browser'),
-              ('name', 'severity', 'level'),
               ('related_requirement', 'related_task'),
               'tags',
+              'description',
               'cc_to'
               )
     filter_horizontal = ('cc_to',)
@@ -30,7 +31,7 @@ class BugAdmin(BaseAdmin):
 @admin.register(models.TestCase)
 class TestCaseAdmin(BaseAdmin):
     admin_order = 2
-    list_display = ('level', 'product_branch', 'name', 'type', 'creator', 'operations')
+    list_display = ('level', 'product', 'name', 'type', 'creator', 'operations')
 
     class TestStepInline(BaseTabularInline):
         model = models.TestStep
@@ -40,9 +41,8 @@ class TestCaseAdmin(BaseAdmin):
         exclude = ('bug',)
 
     inlines = [TestStepInline, TestAttachmentInline]
-    fields = (('product', 'product_branch', 'product_module'),
-              ('type', 'stage'),
-              'related_requirement',
+    fields = (('product',  'product_module'),
+              ('type', 'stage', 'related_requirement'),
               ('name', 'level'),
               'pre_condition',
               'tags',

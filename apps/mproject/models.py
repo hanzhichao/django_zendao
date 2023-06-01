@@ -6,7 +6,7 @@ from utils.field_utils import RichTextField
 from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithLevel, WithStartEndDate, WithAssignee, NULLABLE_FK,
                                WithStage, WithTags
                                )
-from mproduct.models import Product, ProductModule, WithProductBranch, WithProductModule, ProductPlan
+from mproduct.models import Product, ProductModule, WithProduct, WithProductModule, ProductPlan
 
 
 class Project(BaseModel, WithStartEndDate):
@@ -63,7 +63,7 @@ class WithProject(models.Model):
         abstract = True
 
 
-class ProjectRelatedProduct(WithProject, WithProductBranch):
+class ProjectRelatedProduct(WithProject, WithProduct):
     class Meta(BaseMeta):
         verbose_name = "关联产品"
         verbose_name_plural = "关联产品"

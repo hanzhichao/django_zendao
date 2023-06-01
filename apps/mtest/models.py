@@ -116,7 +116,7 @@ class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, Wit
         ('ubuntu', 'ubuntu'),
     )
     BUG_STATUS_CHOICES = (
-        ('new', '激活'),
+        ('new', '打开'),
         ('resolved', '已解决'),
         ('closed', '已关闭'),
     )
@@ -131,7 +131,7 @@ class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, Wit
     SEVERITY_CHOICES = ((0, 'O'), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'))
     severity = models.PositiveSmallIntegerField('严重等级', choices=SEVERITY_CHOICES, default=2)
 
-    type = models.CharField('用例类型', max_length=20, choices=BUG_TYPE_CHOICES, default='code')
+    type = models.CharField('缺陷类型', max_length=20, choices=BUG_TYPE_CHOICES, default='code')
     status = models.CharField('状态', max_length=20, choices=BUG_STATUS_CHOICES, default='new')
     platform = models.CharField('操作系统', max_length=20, choices=PLATFORM_CHOICES, default='win10')
     browser = models.CharField('浏览器', max_length=20, choices=BROWSER_CHOICES, default='chrome')

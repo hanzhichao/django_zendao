@@ -62,11 +62,11 @@ class RequirementAdmin(BaseAdmin):
 
     list_display = (
         'id', 'name', 'level', 'product_plan', 'source', 'assignee', 'estimated_time', 'status', 'stage', 'operations')
-    list_filter = ('product_branch', 'product_module', 'status', 'stage', 'assignee', 'reviewer')
+    list_filter = ('product', 'product_module', 'status', 'stage', 'assignee', 'reviewer')
     search_fields = ('name',)
     inlines = [ProductRequirementAttachmentInline]
     readonly_fields = ('status',)
-    fields = (('product', 'product_branch', 'product_module', 'product_plan',),
+    fields = (('product', 'product_module', 'product_plan',),
               ('name',  'source', 'level', 'estimated_time'),
               ('status', 'stage', 'assignee', 'reviewer', 'no_need_review'),
               'description',

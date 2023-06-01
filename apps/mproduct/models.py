@@ -44,27 +44,27 @@ class WithProduct(models.Model):
         abstract = True
 
 
-class ProductBranch(InlineModel, WithProduct):
-    class Meta(BaseMeta):
-        verbose_name = "产品分支"
-        verbose_name_plural = "产品分支"
+# class ProductBranch(InlineModel, WithProduct):
+#     class Meta(BaseMeta):
+#         verbose_name = "产品分支"
+#         verbose_name_plural = "产品分支"
 
 
-class WithProductBranch(WithProduct):
-    product_branch = models.ForeignKey(
-        ProductBranch, verbose_name='所属分支', related_name="%(class)s_product_branch", **NULLABLE_FK)
+# class WithProductBranch(WithProduct):
+#     product_branch = models.ForeignKey(
+#         ProductBranch, verbose_name='所属分支', related_name="%(class)s_product_branch", **NULLABLE_FK)
+#
+#     class Meta:
+#         abstract = True
 
-    class Meta:
-        abstract = True
 
-
-class ProductModule(InlineModel, WithProductBranch, WithParent):
+class ProductModule(InlineModel, WithProduct, WithParent):
     class Meta(BaseMeta):
         verbose_name = "产品模块"
         verbose_name_plural = "产品模块"
 
 
-class WithProductModule(WithProductBranch):
+class WithProductModule(WithProduct):
     product_module = models.ForeignKey(
         ProductModule, verbose_name='所属模块', related_name="%(app_label)s_%(class)s_module", **NULLABLE_FK)
 
@@ -73,7 +73,8 @@ class WithProductModule(WithProductBranch):
 
 
 
-class ProductVersion(BaseModel, WithProductBranch):
+class ProductVersion(BaseModel, WithProduct):
+
     builder = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="%(app_label)s_%(class)s_builder",
@@ -114,7 +115,7 @@ class ReleasePackage(InlineModel):
 
 
 
-class ProductPlan(InlineModel, WithProductBranch, WithStartEndDate):
+class ProductPlan(InlineModel, WithProduct, WithStartEndDate):
     class Meta(BaseMeta):
         verbose_name = "发布计划"
         verbose_name_plural = "发布计划"
