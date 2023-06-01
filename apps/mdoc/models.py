@@ -1,9 +1,10 @@
 from django.db import models
 
 from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithTags, WithParent, NULLABLE_FK)
-from DjangoUeditor.models import UEditorField
+# from DjangoUeditor.models import UEditorField
 from mproduct.models import Product
 from mproject.models import Project
+from tinymce.models import HTMLField
 
 
 class DocLibrary(BaseModel):
@@ -33,7 +34,7 @@ class Doc(BaseModel, WithTags):
                                     related_name="%(app_label)s_%(class)s_doc_library", on_delete=models.PROTECT)
     doc_category = models.ForeignKey(DocCategory, verbose_name='所属分类',
                                      related_name="%(app_label)s_%(class)s_doc_category", **NULLABLE_FK)
-    content = UEditorField('文档正文', null=True, blank=True)
+    content = HTMLField('文档正文', null=True, blank=True)
     link = models.URLField('文档链接', null=True, blank=True)
 
     class Meta(BaseMeta):

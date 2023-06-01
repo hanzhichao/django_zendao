@@ -15,7 +15,7 @@ ALLOWED_HOSTS = ['*']
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 INSTALLED_APPS = [
-    'simpleui',
+    # 'simpleui',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -24,21 +24,25 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # for admin
+    'nested_admin',
+    'import_export',
+    'taggit',
+    'tinymce',
+    # 'admin_reorder',
+
+    # for api
     'rest_framework',
     'django_filters',
     'corsheaders',
-    'import_export',
-    'taggit',
-    'ckeditor',
-    'ckeditor_uploader',
-    # 'DjangoUeditor',
 
-    'mdoc',
+    # out apps
     'mproduct',
     'mproject',
-    'msystem',
+    'mdoc',
     'mtest',
-    'muser'
+    'muser',
+    'msystem',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +53,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # added
+    # 'admin_reorder.middleware.ModelAdminReorder',
 ]
 
 ROOT_URLCONF = 'django_zendao.urls'
@@ -159,25 +166,49 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.AutoSchema",
 }
 
+# # django-simpleui配置 -----------------------------------------------
+# SIMPLEUI_HOME_INFO = False
+# SIMPLEUI_STATIC_OFFLINE = True
+# SIMPLEUI_ANALYSIS = False
+#
+# SIMPLEUI_CONFIG = {
+#     'system_keep': True,
+#     'menu_display': ['产品管理', '项目管理', '测试管理', '文档管理','认证和授权'],
+# }
+#
+#
+# SIMPLEUI_ICON = {
+#     '产品管理': 'fas fa-link', '产品': 'fas fa-server', '产品版本': 'fas fa-code-branch', '产品需求': 'fas fa-link',
+#     '项目管理': 'fas fa-cube', '项目': 'fas fa-suitcase', '任务': 'fas fa-list',
+#     '测试管理': 'fas fa-flask', '测试计划': 'fas fa-calendar','测试用例': 'fas fa-vial','缺陷': 'fas fa-bug',
+#     '文档管理': 'fas fa-suitcase', '文档库': 'fas fa-book', '文档': 'fas fa-file-alt'
+# }
+#
+#
+# # django-ckeditor
+# CKEDITOR_UPLOAD_PATH = '/static/media'
 
-# django-simpleui配置 -----------------------------------------------
-SIMPLEUI_HOME_INFO = False
-SIMPLEUI_STATIC_OFFLINE = True
-SIMPLEUI_ANALYSIS = False
 
-SIMPLEUI_CONFIG = {
-    'system_keep': True,
-    'menu_display': ['产品管理', '项目管理', '测试管理', '文档管理','认证和授权'],
+# tinymce配置
+TINYMCE_DEFAULT_CONFIG = {
+    "theme": "silver",
+    "height": 300,
+    "menubar": False,
+    "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
+               "searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,"
+               "code,help,wordcount",
+    "toolbar": "undo redo | formatselect | "
+               "bold italic backcolor | alignleft aligncenter "
+               "alignright alignjustify | bullist numlist outdent indent | "
+               "removeformat | help",
+    "language": "zh_CN"
 }
 
-
-SIMPLEUI_ICON = {
-    '产品管理': 'fas fa-link', '产品': 'fas fa-server', '产品版本': 'fas fa-code-branch', '产品需求': 'fas fa-link',
-    '项目管理': 'fas fa-cube', '项目': 'fas fa-suitcase', '任务': 'fas fa-list',
-    '测试管理': 'fas fa-flask', '测试计划': 'fas fa-calendar','测试用例': 'fas fa-vial','缺陷': 'fas fa-bug',
-    '文档管理': 'fas fa-suitcase', '文档库': 'fas fa-book', '文档': 'fas fa-file-alt'
+APP_LIST = {
+    'mproduct': {'order': 1, 'models': ['Product',  'ProductVersion', 'ProductPlan']},
+    'mproject': {'order': 2, 'models': ['Project', 'Requirement','Task']},
+    'mtest': {'order': 3, 'models': ['Bug', 'TestCase', 'TestPlan']},
+    'mdoc': {'order': 4, 'models': ['DocLibrary', 'Doc']},
+    'auth': {'order': 5},
+    'admin': {'order': 6}
 }
-
-
-# django-ckeditor
-CKEDITOR_UPLOAD_PATH = '/static/media'

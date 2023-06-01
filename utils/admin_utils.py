@@ -4,15 +4,15 @@ from django.urls import path
 from django.utils.safestring import mark_safe
 from functools import wraps
 
-BASE_MODEL_ADMIN = admin.ModelAdmin
-BASE_TABULAR_INLINE = admin.TabularInline
-BASE_STACKED_INLINE = admin.StackedInline
+# BASE_MODEL_ADMIN = admin.ModelAdmin
+# BASE_TABULAR_INLINE = admin.TabularInline
+# BASE_STACKED_INLINE = admin.StackedInline
 
-# import nested_admin
-# BASE_MODEL_ADMIN = nested_admin.NestedModelAdmin
-# BASE_TABULAR_INLINE = nested_admin.NestedTabularInline
-# BASE_STACKED_INLINE = nested_admin.NestedStackedInline
-
+import nested_admin
+BASE_MODEL_ADMIN = nested_admin.NestedModelAdmin
+BASE_TABULAR_INLINE = nested_admin.NestedTabularInline
+BASE_STACKED_INLINE = nested_admin.NestedStackedInline
+#
 def short_description(text):
     def deco(func):
         @wraps(func)
@@ -45,7 +45,7 @@ class BaseAdmin(ImportExportModelAdmin, BASE_MODEL_ADMIN):
     def get_list_display(self, request):
         return self.list_display if 'id' in self.list_display else ['id', *self.list_display]
 
- 
+
     def save_model(self, request, obj, form, change):
         if not obj.pk:  # 创建时
             obj.creator = request.user

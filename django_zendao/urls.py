@@ -8,10 +8,11 @@ urlpatterns = [
     # path('uploads/<path>',static.serve,{"document_root":settings.MEDIA_ROOT},name='media'),
     path('admin/', admin.site.urls),
     # path('ueditor/', include('DjangoUeditor.urls')),
-    path('ckeditor/', include('ckeditor_uploader.urls'))
+    # path('ckeditor/', include('ckeditor_uploader.urls'))
+    path('tinymce/', include('tinymce.urls')),
 ]
 
 if settings.DEBUG:
     urlpatterns.append(
-        path('uploads/<path>',static.serve, {"document_root": settings.MEDIA_ROOT}, name='media')
+        path('uploads/<path>', static.serve, {"document_root": settings.MEDIA_ROOT}, name='media')
     )

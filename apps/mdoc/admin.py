@@ -13,6 +13,7 @@ class DocCategoryChoiceField(forms.ModelChoiceField):
 
 @admin.register(models.DocLibrary)
 class DocLibraryAdmin(BaseAdmin):
+    admin_order = 1
     list_display = ('name', 'description', 'created', 'modified')
 
     class DocCategoryInline(BaseTabularInline):
@@ -23,6 +24,7 @@ class DocLibraryAdmin(BaseAdmin):
 
 @admin.register(models.Doc)
 class DocAdmin(BaseAdmin):
+    admin_order = 2
     list_display = ('name', 'type', 'creator', 'created', 'operations')
     list_filter = ('doc_library', 'doc_category')
     fields = (('project', 'product'), ('doc_library', 'doc_category'), 'type',

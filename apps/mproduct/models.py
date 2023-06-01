@@ -5,7 +5,7 @@ from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithLevel, With
                                WithParent, WithAssignee, WithType, NULLABLE_FK
                                )
 from django.conf import settings
-from ckeditor.fields import RichTextField
+from utils.field_utils import RichTextField
 
 
 class Product(BaseModel):
@@ -72,11 +72,6 @@ class WithProductModule(WithProductBranch):
         abstract = True
 
 
-class ProductPlan(InlineModel, WithProductBranch, WithStartEndDate):
-    class Meta(BaseMeta):
-        verbose_name = "产品计划"
-        verbose_name_plural = "产品计划"
-
 
 class ProductVersion(BaseModel, WithProductBranch):
     builder = models.ForeignKey(
@@ -89,8 +84,8 @@ class ProductVersion(BaseModel, WithProductBranch):
     download_url = models.CharField('下载地址', max_length=200, blank=True, null=True)
 
     class Meta(BaseMeta):
-        verbose_name = "产品版本"
-        verbose_name_plural = "产品版本"
+        verbose_name = "版本"
+        verbose_name_plural = "版本"
 
 
 class ProductRelease(InlineModel):
@@ -118,55 +113,9 @@ class ReleasePackage(InlineModel):
         verbose_name_plural = "发行包"
 
 
-class ProductRequirement(BaseModel, WithProductModule, WithLevel, WithAssignee, WithStage, WithTags):
-    SOURCE_CHOICES = (('customer', '客户'),
-                      ('user', '用户'),
-                      ('pm', '产品经理'),
-                      ('market', '市场'),
-                      ('customer_service', '客服'),
-                      ('developer', '开发人员'),
-                      ('tester', '测试人员'),
-                      ('else', '其他'),
-                      )
 
-    STATUS_CHOICES = (('active', '激活'), ('closed', '关闭'))
-    STAGE_CHOICES = (('new', '未开始'),
-                     ('in_plan', '已计划'),
-                     ('in_project', '已立项'),
-                     ('developing', '研发中'),
-                     ('develop_complete', '研发完毕'),
-                     ('testing', '测试中'),
-                     ('test_complete', '测试完毕'),
-                     ('accepted', '已验收'),
-                     ('online', '已发布'),
-                     )
-
-    product_plan = models.ForeignKey(
-        ProductPlan, verbose_name='所属计划', related_name="%(app_label)s_%(class)s_plan", **NULLABLE_FK)
-    source = models.CharField('需求来源', max_length=20, choices=SOURCE_CHOICES, blank=True, null=True)
-    status = models.CharField('状态', max_length=20, choices=STATUS_CHOICES, default='active')
-    stage = models.CharField('所处阶段', max_length=20, choices=STAGE_CHOICES, default='new')
-    reviewer = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name="%(app_label)s_%(class)s_reviewer",
-        verbose_name="由谁评审", **NULLABLE_FK
-    )
-    no_need_review = models.BooleanField('不需要评审', default=True)
-    estimated_time = models.PositiveSmallIntegerField('预计耗时(h)', blank=True, null=True)
-    acceptance_criteria = RichTextField('验收标准', blank=True, null=True)
-    cc_to = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                   related_name="%(app_label)s_%(class)s_cc_to", verbose_name="抄送给", blank=True)
-
+class ProductPlan(InlineModel, WithProductBranch, WithStartEndDate):
     class Meta(BaseMeta):
-        verbose_name = "产品需求"
-        verbose_name_plural = "产品需求"
+        verbose_name = "发布计划"
+        verbose_name_plural = "发布计划"
 
-
-class ProductRequirementAttachment(InlineModel):
-    product_requirement = models.ForeignKey(ProductRequirement, verbose_name='所属需求', related_name="%(app_label)s_%(class)s_product_requirement", **NULLABLE_FK)
-
-    file = models.FileField('附件', upload_to='uploads/')
-
-    class Meta(BaseMeta):
-        verbose_name = "附件"
-        verbose_name_plural = "附件"

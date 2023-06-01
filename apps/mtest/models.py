@@ -1,18 +1,15 @@
 from django.db import models
 from django.conf import settings
-from django.core.validators import FileExtensionValidator
 from django.utils import timezone
-# from DjangoUeditor.models import UEditorField
-from ckeditor.fields import RichTextField
 
-from utils.field_utils import YamlField
+from utils.field_utils import YamlField, RichTextField
 from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithLevel, WithTags,  WithStatus,WithStage,
                                RecordModel,  WithOrder, WithAssignee, WithManager, WithStartEndDate,
                                WithParent, NULLABLE_FK
                                )
 
-from mproduct.models import WithProductModule, ProductRequirement, ProductRelease
-from mproject.models import WithProject, Task
+from mproduct.models import WithProductModule,  ProductRelease
+from mproject.models import WithProject, Requirement, Task
 
 
 class TestPlan(BaseModel, WithProject, WithManager, WithLevel, WithStartEndDate):
@@ -71,11 +68,11 @@ class TestCase(BaseModel, WithProductModule, WithTags, WithLevel):
                               ('unit_test', '单元测试阶段'),
                               ('smoke_test', '冒烟测试阶段'),
                               ('version_verify', '版本验证阶段'))
-    type = models.CharField('项目类型', max_length=20, choices=TESTCASE_TYPE_CHOICES, default='func_test')
+    type = models.CharField('用例类型', max_length=20, choices=TESTCASE_TYPE_CHOICES, default='func_test')
     stage = models.CharField('适用阶段', max_length=20, choices=TESTCASE_STAGE_CHOICES, default='prod')
-    related_requirement = models.ForeignKey(ProductRequirement, verbose_name='关联需求',
+    related_requirement = models.ForeignKey(Requirement, verbose_name='关联需求',
                                             related_name="%(app_label)s_%(class)s_related_requirement", **NULLABLE_FK)
-    pre_condition = models.TextField('预置条件', blank=True)
+    pre_condition = RichTextField('预置条件', blank=True)
 
     class Meta(BaseMeta):
         verbose_name = '测试用例'
@@ -87,8 +84,8 @@ class TestStep(InlineModel, WithOrder):
     excepted = models.CharField('预期', max_length=200, null=True, blank=True)
 
     class Meta(BaseMeta):
-        verbose_name = '步骤'
-        verbose_name_plural = '步骤'
+        verbose_name = '测试步骤'
+        verbose_name_plural = '测试步骤'
 
 
 class TestCaseRecord(RecordModel, WithStatus):
@@ -134,14 +131,14 @@ class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, Wit
     SEVERITY_CHOICES = ((0, 'O'), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'))
     severity = models.PositiveSmallIntegerField('严重等级', choices=SEVERITY_CHOICES, default=2)
 
-    type = models.CharField('项目类型', max_length=20, choices=BUG_TYPE_CHOICES, default='code')
+    type = models.CharField('用例类型', max_length=20, choices=BUG_TYPE_CHOICES, default='code')
     status = models.CharField('状态', max_length=20, choices=BUG_STATUS_CHOICES, default='new')
     platform = models.CharField('操作系统', max_length=20, choices=PLATFORM_CHOICES, default='win10')
     browser = models.CharField('浏览器', max_length=20, choices=BROWSER_CHOICES, default='chrome')
 
     related_release = models.ForeignKey(ProductRelease, verbose_name='影响版本',
                                         related_name="%(app_label)s_%(class)s_related_release", **NULLABLE_FK)
-    related_requirement = models.ForeignKey(ProductRequirement, verbose_name='关联需求',
+    related_requirement = models.ForeignKey(Requirement, verbose_name='关联需求',
                                             related_name="%(app_label)s_%(class)s_related_requirement", **NULLABLE_FK)
     related_task = models.ForeignKey(Task, verbose_name='关联任务',
                                             related_name="%(app_label)s_%(class)s_related_requirement", **NULLABLE_FK)

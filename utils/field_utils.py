@@ -10,6 +10,16 @@ from django.core import exceptions
 from django.utils.encoding import force_str as force_text
 from django.core.exceptions import ObjectDoesNotExist
 
+from tinymce.models import HTMLField
+
+RichTextField = HTMLField
+# from ckeditor_uploader.fields import RichTextUploadingField as RichTextField
+# from DjangoUeditor.models import UEditorField as RichTextField
+
+class UserChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return "%s%s" % (obj.last_name, obj.first_name)
+
 
 class YamlWidget(forms.Textarea):
     def __init__(self, attrs=None):

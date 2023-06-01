@@ -7,10 +7,8 @@ import datetime
 from django.utils.encoding import force_str as force_text
 from django.utils.translation import gettext_lazy as _
 
-from ckeditor.fields import RichTextField
-from ckeditor_uploader.fields import RichTextUploadingField
-# from DjangoUeditor.models import UEditorField
 from taggit.managers import TaggableManager
+from .field_utils import RichTextField
 
 NULLABLE_FK = dict(blank=True, null=True, on_delete=models.SET_NULL)
 NULLABLE = dict(blank=True, null=True)
@@ -43,7 +41,8 @@ class WithUniqueName(WithName):
 
 class WithDesc(models.Model):
     # description = models.TextField('描述', null=True, blank=True)
-    description = RichTextUploadingField(default='', verbose_name='描述', null=True, blank=True)
+    description = RichTextField(default='', verbose_name='描述', null=True, blank=True)
+
     # description = RichTextField(default='', verbose_name='描述', null=True, blank=True,
     #                            width=800, height=150,
     #                            toolbars="mini"
@@ -89,7 +88,7 @@ class WithCreator(models.Model):
 
 class WithLevel(models.Model):
     LEVEL_DEFAULT = 2
-    LEVEL_CHOICES = ((0, 'O'), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'))
+    LEVEL_CHOICES = ((0, 'P0'), (1, 'P1'), (2, 'P2'), (3, 'P3'), (4, 'P4'), (5, 'P5'))
     level = models.PositiveSmallIntegerField('优先级', choices=LEVEL_CHOICES, default=LEVEL_DEFAULT)
 
     class Meta:
@@ -100,6 +99,7 @@ class WithType(models.Model):
     TYPE_DEFAULT = None
     TYPE_CHOICES = None
     type = models.CharField('项目类型', max_length=20, choices=TYPE_CHOICES, default=TYPE_DEFAULT)
+
     class Meta:
         abstract = True
 
@@ -111,7 +111,6 @@ class WithStatus(models.Model):
 
     class Meta:
         abstract = True
-
 
 
 class WithOperator(models.Model):
@@ -156,6 +155,7 @@ class WithUrl(models.Model):
 
 class WithImage(models.Model):
     image = models.ImageField('缩略图', upload_to='uploads/', null=True, blank=True)
+
     class Meta:
         abstract = True
 
@@ -236,12 +236,12 @@ class WithParent(models.Model):
 
 class WithStartEndTime(models.Model):
     start_time = models.DateTimeField("开始时间",
-        default=timezone.datetime.now, editable=True,
-    )
+                                      default=timezone.datetime.now, editable=True,
+                                      )
     end_time = models.DateTimeField("结束时间",
-        default=timezone.datetime.now, editable=True,
-        null=True, blank=True,
-    )
+                                    default=timezone.datetime.now, editable=True,
+                                    null=True, blank=True,
+                                    )
 
     class Meta:
         abstract = True
@@ -249,16 +249,17 @@ class WithStartEndTime(models.Model):
 
 class WithStartEndDate(models.Model):
     start_date = models.DateField("开始日期",
-        default=datetime.date.today, editable=True,
+                                  default=datetime.date.today, editable=True,
                                   null=True, blank=True,
-    )
+                                  )
     end_date = models.DateField("结束日期",
-        default=datetime.date.today, editable=True,
-        null=True, blank=True,
-    )
+                                default=datetime.date.today, editable=True,
+                                null=True, blank=True,
+                                )
 
     class Meta:
         abstract = True
+
 
 class WitContentType(models.Model):
     content_type = models.ForeignKey(
@@ -287,7 +288,7 @@ class WithNameDesc(WithDesc, WithName):
         abstract = True
 
 
-class WithCreatedModified(WithCreated,  WithModified):
+class WithCreatedModified(WithCreated, WithModified):
     class Meta:
         abstract = True
 
@@ -342,5 +343,3 @@ class InlineModel(WithName):
 class RecordModel(WithCreated):
     class Meta:
         abstract = True
-
-
