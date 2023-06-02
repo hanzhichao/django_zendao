@@ -90,3 +90,4 @@ class TaskAdmin(BaseAdmin):
         ('project', 'product_module'), 'name', ('assignee', 'level'), ('type', 'status'), ('start_date', 'end_date'),
         'description', 'cc_to')
     filter_horizontal = ('cc_to',)
+

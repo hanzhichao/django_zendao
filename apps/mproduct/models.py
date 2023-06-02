@@ -117,6 +117,6 @@ class ReleasePackage(InlineModel):
 
 class ProductPlan(InlineModel, WithProduct, WithStartEndDate):
     class Meta(BaseMeta):
-        verbose_name = "发布计划"
-        verbose_name_plural = "发布计划"
+        verbose_name = "迭代"
+        verbose_name_plural = "迭代"
 

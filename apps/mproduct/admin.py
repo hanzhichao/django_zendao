@@ -19,6 +19,9 @@ class ProductAdmin(BaseAdmin):
     class ProductModuleInline(BaseTabularInline):
         model = models.ProductModule
 
+    class ProductPlanInline(BaseTabularInline):
+        model = models.ProductPlan
+
     # class ProductPlanInline(BaseTabularInline):
     #     model = models.ProductPlan
 
@@ -27,7 +30,7 @@ class ProductAdmin(BaseAdmin):
     def requirements_num(self, obj):
         return obj.mproject_requirement_product.count()
 
-    inlines = [ProductModuleInline]
+    inlines = [ProductPlanInline, ProductModuleInline]
     fields = (
         'name', 'key', ('product_manager', 'test_manager', 'release_manager'), 'type', 'description', 'view_control')
 
@@ -56,6 +59,8 @@ class ProductVersionAdmin(BaseAdmin):
         model = models.ProductRelease
         inlines = [ReleasePackageInline]
 
+
+
     list_filter = ('product', 'builder')
     list_display = ('id', 'name', 'product', 'code_repo', 'download_url', 'build_date', 'builder', 'operations')
     inlines = [ProductReleaseInline]
@@ -67,8 +72,3 @@ class ProductVersionAdmin(BaseAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-@admin.register(models.ProductPlan)
-class ProductPlanAdmin(BaseAdmin):
-    admin_order = 3
-    list_display = ('id', 'name', 'product', 'start_date', 'end_date')
-    list_filter = ('product',)

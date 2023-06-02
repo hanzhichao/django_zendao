@@ -17,6 +17,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 INSTALLED_APPS = [
     # 'simpleui',
 
+    # 'grappelli',
+    "admin_interface",
+    "colorfield",
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,6 +33,12 @@ INSTALLED_APPS = [
     'import_export',
     'taggit',
     'tinymce',
+    'notifications',
+    'crispy_forms',
+    'treenode',
+    'extra_settings',
+    # 'loginas',
+    # 'django_comments',
     # 'attachments',
 
     # 'admin_reorder',
@@ -73,6 +83,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 'loginas.context_processors.impersonated_session_status',
             ],
         },
     },
@@ -208,10 +219,25 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 APP_LIST = {
-    'mproduct': {'order': 1, 'models': ['Product',  'ProductVersion', 'ProductPlan']},
-    'mproject': {'order': 2, 'models': ['Project', 'Requirement','Task']},
+    'mproduct': {'order': 1, 'models': ['Product', 'ProductVersion', 'ProductPlan']},
+    'mproject': {'order': 2, 'models': ['Project', 'Requirement', 'Task']},
     'mtest': {'order': 3, 'models': ['Bug', 'TestCase', 'TestPlan']},
     'mdoc': {'order': 4, 'models': ['DocLibrary', 'Doc']},
     'auth': {'order': 5},
     'admin': {'order': 6}
 }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "...",
+    },
+    "treenode": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
+}
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]

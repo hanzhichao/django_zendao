@@ -128,7 +128,7 @@ class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, Wit
         ('firefox', 'firefox'),
         ('ie', 'IE'),
     )
-    SEVERITY_CHOICES = ((0, 'O'), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'))
+    SEVERITY_CHOICES = ((0, '0️⃣'), (1, '1️⃣'), (2, '2️⃣'), (3, '3️⃣'), (4, '4️⃣'), (5, '5️⃣'))
     severity = models.PositiveSmallIntegerField('严重等级', choices=SEVERITY_CHOICES, default=2)
 
     type = models.CharField('缺陷类型', max_length=20, choices=BUG_TYPE_CHOICES, default='code')
@@ -148,6 +148,9 @@ class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, Wit
     class Meta(BaseMeta):
         verbose_name = "缺陷"
         verbose_name_plural = "缺陷"
+
+    def __str__(self):
+        return ''
 
 #
 # class TestAttachment(InlineModel):

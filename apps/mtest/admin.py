@@ -1,4 +1,5 @@
 from django.contrib import admin
+from extra_settings.models import Setting
 
 from msystem.admin import AttachmentInline
 from . import models
@@ -24,6 +25,17 @@ class BugAdmin(BaseAdmin):
               'cc_to'
               )
     filter_horizontal = ('cc_to',)
+
+    def formfield_for_choice_field(self, db_field, request, **kwargs):
+
+        if db_field.name == "severity":
+            value = Setting.get("BUG_SEVERITY")
+            if value:
+                choices = list(zip(range(len(value)), value))
+            kwargs['choices'] = choices
+            # if request.user.is_superuser:
+            #     kwargs['choices'] += (('ready', 'Ready for deployment'),)
+        return super().formfield_for_choice_field(db_field, request, **kwargs)
 
 
 @admin.register(models.TestCase)
@@ -54,4 +66,4 @@ class TestPlanAdmin(BaseAdmin):
         model = models.TestPlanCase
 
     inlines = [TestPlanCaseInline]
-    filter_horizontal = ('cc_to',)
+    filter_horizontal = ('cc_to', )

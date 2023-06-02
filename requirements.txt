@@ -8,6 +8,11 @@ django-tinymce
 django-import-export
 django-taggit
 django-nested-admin
+django-treenode
+django-admin-interface
+django-extra-settings
+django-grappelli
+
 
 # for apis
 djangorestframework
