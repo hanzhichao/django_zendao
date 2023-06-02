@@ -3,6 +3,10 @@ from pprint import pprint
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
+from django.forms import BaseInlineFormSet
+
+from .models import Attachment
 
 admin.site.site_header = "禅道"
 admin.site.site_title = "禅道"
@@ -14,13 +18,11 @@ def get_app_list(self, request, app_label=None):
 
     if hasattr(settings, 'APP_LIST'):
         app_list_settings = getattr(settings, 'APP_LIST')
-        pprint(app_list_settings)
         app_list = sorted(app_dict.values(),
                           key=lambda x: app_list_settings.get(x['app_label'])['order']
                           if x['app_label'] in app_list_settings else 100)
 
         for app in app_list:
-            pprint(app['models'])
             model_settings = app_list_settings.get(app['app_label'], {}).get('models')
             if model_settings:
                 app["models"].sort(
@@ -73,3 +75,12 @@ class MyUserAdmin(admin.ModelAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, MyUserAdmin)
+
+
+
+
+class AttachmentInline(GenericTabularInline):
+    model = Attachment
+    exclude = ('creator', 'operator')
+    extra = 0
+

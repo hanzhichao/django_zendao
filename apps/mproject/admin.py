@@ -2,6 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.contrib.auth.models import User
 
+from msystem.admin import AttachmentInline
 from utils.field_utils import UserChoiceField
 from . import models
 
@@ -41,8 +42,8 @@ class ProductModuleChoiceField(forms.ModelChoiceField):
 class RequirementAdmin(BaseAdmin):
     admin_order = 2
 
-    class ProductRequirementAttachmentInline(BaseTabularInline):
-        model = models.ProductRequirementAttachment
+    # class ProductRequirementAttachmentInline(BaseTabularInline):
+    #     model = models.ProductRequirementAttachment
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'product_plan':
@@ -64,7 +65,7 @@ class RequirementAdmin(BaseAdmin):
         'id', 'name', 'level', 'product_plan', 'source', 'assignee', 'estimated_time', 'status', 'stage', 'operations')
     list_filter = ('product', 'product_module', 'status', 'stage', 'assignee', 'reviewer')
     search_fields = ('name',)
-    inlines = [ProductRequirementAttachmentInline]
+    inlines = [AttachmentInline]
     readonly_fields = ('status',)
     fields = (('product', 'product_module', 'product_plan',),
               ('name',  'source', 'level', 'estimated_time'),
@@ -81,10 +82,8 @@ class RequirementAdmin(BaseAdmin):
 class TaskAdmin(BaseAdmin):
     admin_order = 3
 
-    class TaskAttachmentInline(BaseTabularInline):
-        model = models.TaskAttachment
 
-    inlines = [TaskAttachmentInline]
+    inlines = [AttachmentInline]
 
     list_display = ('level', 'name', 'status', 'end_date', 'assignee')
     fields = (

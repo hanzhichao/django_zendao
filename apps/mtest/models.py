@@ -149,12 +149,12 @@ class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, Wit
         verbose_name = "缺陷"
         verbose_name_plural = "缺陷"
 
-
-class TestAttachment(InlineModel):
-    test_case = models.ForeignKey(TestCase, verbose_name='测试用例', related_name='%(app_label)s_%(class)s_test_case', **NULLABLE_FK)
-    bug = models.ForeignKey(Bug, verbose_name='Bug', related_name='%(app_label)s_%(class)s_test_case', **NULLABLE_FK)
-    file = models.FileField('附件', upload_to='uploads/')
-
-    class Meta(BaseMeta):
-        verbose_name = "附件"
-        verbose_name_plural = "附件"
+#
+# class TestAttachment(InlineModel):
+#     test_case = models.ForeignKey(TestCase, verbose_name='测试用例', related_name='%(app_label)s_%(class)s_test_case', **NULLABLE_FK)
+#     bug = models.ForeignKey(Bug, verbose_name='Bug', related_name='%(app_label)s_%(class)s_test_case', **NULLABLE_FK)
+#     file = models.FileField('附件', upload_to='uploads/')
+#
+#     class Meta(BaseMeta):
+#         verbose_name = "附件"
+#         verbose_name_plural = "附件"

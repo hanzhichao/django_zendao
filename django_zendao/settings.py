@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'import_export',
     'taggit',
     'tinymce',
+    # 'attachments',
+
     # 'admin_reorder',
 
     # for api
@@ -101,6 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'zh-hans'
+# LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'Asia/Shanghai'
 

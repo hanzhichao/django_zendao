@@ -10,6 +10,7 @@ urlpatterns = [
     # path('ueditor/', include('DjangoUeditor.urls')),
     # path('ckeditor/', include('ckeditor_uploader.urls'))
     path('tinymce/', include('tinymce.urls')),
+    # path('attachments/',  include('attachments.urls', namespace='attachments')),
 ]
 
 if settings.DEBUG:

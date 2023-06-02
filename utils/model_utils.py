@@ -1,3 +1,4 @@
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -8,11 +9,23 @@ from django.utils.encoding import force_str as force_text
 from django.utils.translation import gettext_lazy as _
 
 from taggit.managers import TaggableManager
+
 from .field_utils import RichTextField
 
 NULLABLE_FK = dict(blank=True, null=True, on_delete=models.SET_NULL)
 NULLABLE = dict(blank=True, null=True)
 
+class _BaseModel(models.Model):
+
+    class Meta:
+        abstract = True
+
+    def has_field(self, field)->bool:
+        try:
+            self._meta.get_field(field)
+            return True
+        except FieldDoesNotExist:
+            return False
 
 class BaseMeta:
     ordering = ['id']
@@ -22,7 +35,7 @@ class AbstractMeta:
     abstract = True
 
 
-class WithName(models.Model):
+class WithName(_BaseModel):
     name = models.CharField("名称", max_length=200)
 
     class Meta:
@@ -39,7 +52,7 @@ class WithUniqueName(WithName):
         abstract = True
 
 
-class WithDesc(models.Model):
+class WithDesc(_BaseModel):
     # description = models.TextField('描述', null=True, blank=True)
     description = RichTextField(default='', verbose_name='描述', null=True, blank=True)
 
@@ -52,14 +65,14 @@ class WithDesc(models.Model):
         abstract = True
 
 
-class WithShortDesc(models.Model):
+class WithShortDesc(_BaseModel):
     description = models.CharField('描述', max_length=200, null=True, blank=True)
 
     class Meta:
         abstract = True
 
 
-class WithKey(models.Model):
+class WithKey(_BaseModel):
     key = models.CharField("Key", max_length=200, unique=True)
 
     class Meta:
@@ -69,7 +82,7 @@ class WithKey(models.Model):
         return self.key
 
 
-class WithValue(models.Model):
+class WithValue(_BaseModel):
     value = models.CharField("Value", max_length=500)
 
     class Meta:
@@ -86,7 +99,7 @@ class WithCreator(models.Model):
         abstract = True
 
 
-class WithLevel(models.Model):
+class WithLevel(_BaseModel):
     LEVEL_DEFAULT = 2
     LEVEL_CHOICES = ((0, 'P0'), (1, 'P1'), (2, 'P2'), (3, 'P3'), (4, 'P4'), (5, 'P5'))
     level = models.PositiveSmallIntegerField('优先级', choices=LEVEL_CHOICES, default=LEVEL_DEFAULT)
@@ -95,7 +108,7 @@ class WithLevel(models.Model):
         abstract = True
 
 
-class WithType(models.Model):
+class WithType(_BaseModel):
     TYPE_DEFAULT = None
     TYPE_CHOICES = None
     type = models.CharField('项目类型', max_length=20, choices=TYPE_CHOICES, default=TYPE_DEFAULT)
@@ -104,7 +117,7 @@ class WithType(models.Model):
         abstract = True
 
 
-class WithStatus(models.Model):
+class WithStatus(_BaseModel):
     STATUS_DEFAULT = 'ok'
     STATUS_CHOICES = (('ok', '正常'), ('error', '异常'), ('pass', '通过'), ('fail', '失败'))
     status = models.CharField('状态', max_length=20, choices=STATUS_CHOICES, default=STATUS_DEFAULT)
@@ -113,7 +126,7 @@ class WithStatus(models.Model):
         abstract = True
 
 
-class WithOperator(models.Model):
+class WithOperator(_BaseModel):
     operator = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
         related_name="%(app_label)s_%(class)s_operator",
@@ -124,7 +137,7 @@ class WithOperator(models.Model):
         abstract = True
 
 
-class WithManager(models.Model):
+class WithManager(_BaseModel):
     manager = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
         related_name="%(app_label)s_%(class)s_manager",
@@ -135,7 +148,7 @@ class WithManager(models.Model):
         abstract = True
 
 
-class WithAssignee(models.Model):
+class WithAssignee(_BaseModel):
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
         related_name="%(app_label)s_%(class)s_assignee",
@@ -146,21 +159,21 @@ class WithAssignee(models.Model):
         abstract = True
 
 
-class WithUrl(models.Model):
+class WithUrl(_BaseModel):
     url = models.CharField('URL', max_length=500, null=True, blank=True)
 
     class Meta:
         abstract = True
 
 
-class WithImage(models.Model):
+class WithImage(_BaseModel):
     image = models.ImageField('缩略图', upload_to='uploads/', null=True, blank=True)
 
     class Meta:
         abstract = True
 
 
-class WithWatchers(models.Model):
+class WithWatchers(_BaseModel):
     watchers = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         verbose_name="关注人",
@@ -171,7 +184,7 @@ class WithWatchers(models.Model):
         abstract = True
 
 
-class WithMembers(models.Model):
+class WithMembers(_BaseModel):
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         verbose_name="成员",
@@ -182,14 +195,14 @@ class WithMembers(models.Model):
         abstract = True
 
 
-class WithCreated(models.Model):
+class WithCreated(_BaseModel):
     created = models.DateTimeField("创建日期", auto_now_add=True)
 
     class Meta:
         abstract = True
 
 
-class WithModified(models.Model):
+class WithModified(_BaseModel):
     modified = models.DateTimeField(
         auto_now=True, verbose_name="修改日期"
     )
@@ -199,21 +212,21 @@ class WithModified(models.Model):
         ordering = ['-modified']
 
 
-class WithActive(models.Model):
+class WithActive(_BaseModel):
     active = models.NullBooleanField("已启用", default=True)
 
     class Meta:
         abstract = True
 
 
-class WithDeleted(models.Model):
+class WithDeleted(_BaseModel):
     deleted = models.NullBooleanField("已删除", default=False)
 
     class Meta:
         abstract = True
 
 
-class WithParent(models.Model):
+class WithParent(_BaseModel):
     parent = models.ForeignKey(
         'self',
         blank=True, null=True, on_delete=models.SET_NULL,
@@ -234,7 +247,7 @@ class WithParent(models.Model):
         return '/' + '/'.join([str(item) for item in parents])
 
 
-class WithStartEndTime(models.Model):
+class WithStartEndTime(_BaseModel):
     start_time = models.DateTimeField("开始时间",
                                       default=timezone.datetime.now, editable=True,
                                       )
@@ -247,7 +260,7 @@ class WithStartEndTime(models.Model):
         abstract = True
 
 
-class WithStartEndDate(models.Model):
+class WithStartEndDate(_BaseModel):
     start_date = models.DateField("开始日期",
                                   default=datetime.date.today, editable=True,
                                   null=True, blank=True,
@@ -261,7 +274,7 @@ class WithStartEndDate(models.Model):
         abstract = True
 
 
-class WitContentType(models.Model):
+class WitContentType(_BaseModel):
     content_type = models.ForeignKey(
         ContentType,
         models.SET_NULL,
@@ -308,7 +321,7 @@ class WithActiveDeleted(WithActive, WithDeleted):
         abstract = True
 
 
-class WithStage(models.Model):
+class WithStage(_BaseModel):
     STAGE_CHOICES = (('dev', '开发阶段'), ('test', '测试环境测试'), ('stage', '预发测试'), ('prod', '线上测试'))
     stage = models.CharField('适用阶段', max_length=20, choices=STAGE_CHOICES, default='prod')
 
@@ -316,14 +329,14 @@ class WithStage(models.Model):
         abstract = True
 
 
-class WithTags(models.Model):
+class WithTags(_BaseModel):
     tags = TaggableManager(blank=True)
 
     class Meta:
         abstract = True
 
 
-class WithOrder(models.Model):
+class WithOrder(_BaseModel):
     order = models.PositiveSmallIntegerField('顺序', default=1)
 
     class Meta:
@@ -335,6 +348,8 @@ class BaseModel(WithNameDesc, WithUser):
         abstract = True
 
 
+
+
 class InlineModel(WithName):
     class Meta:
         abstract = True
@@ -343,3 +358,5 @@ class InlineModel(WithName):
 class RecordModel(WithCreated):
     class Meta:
         abstract = True
+
+

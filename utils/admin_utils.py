@@ -4,14 +4,14 @@ from django.urls import path
 from django.utils.safestring import mark_safe
 from functools import wraps
 
-# BASE_MODEL_ADMIN = admin.ModelAdmin
-# BASE_TABULAR_INLINE = admin.TabularInline
-# BASE_STACKED_INLINE = admin.StackedInline
+BASE_MODEL_ADMIN = admin.ModelAdmin
+BASE_TABULAR_INLINE = admin.TabularInline
+BASE_STACKED_INLINE = admin.StackedInline
 
 import nested_admin
-BASE_MODEL_ADMIN = nested_admin.NestedModelAdmin
-BASE_TABULAR_INLINE = nested_admin.NestedTabularInline
-BASE_STACKED_INLINE = nested_admin.NestedStackedInline
+# BASE_MODEL_ADMIN = nested_admin.NestedModelAdmin
+# BASE_TABULAR_INLINE = nested_admin.NestedTabularInline
+# BASE_STACKED_INLINE = nested_admin.NestedStackedInline
 #
 def short_description(text):
     def deco(func):
@@ -41,6 +41,21 @@ class BaseAdmin(ImportExportModelAdmin, BASE_MODEL_ADMIN):
     extra_urls = []   # ('<pk>/run/', self.run)
     obj_operation_urls = []  # ('/run, '运行')
     obj_operation_sep = ' '
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            print('instance', dir(instance))
+            print('instance.pk', instance.pk)
+            print('hasattr creator', instance._meta.get_field('creator'))
+            if not instance.pk and instance.has_field('creator'):
+                instance.creator = request.user
+
+            if  instance.has_field('operator'):
+                instance.operator = request.user
+
+            instance.save()
+        formset.save_m2m()
 
     def get_list_display(self, request):
         return self.list_display if 'id' in self.list_display else ['id', *self.list_display]

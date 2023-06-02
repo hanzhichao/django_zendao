@@ -134,15 +134,15 @@ class Requirement(BaseModel, WithProductModule, WithLevel, WithAssignee, WithSta
         verbose_name_plural = "需求"
 
 
-class ProductRequirementAttachment(InlineModel):
-    product_requirement = models.ForeignKey(Requirement, verbose_name='所属需求',
-                                            related_name="%(app_label)s_%(class)s_product_requirement", **NULLABLE_FK)
-
-    file = models.FileField('附件', upload_to='uploads/')
-
-    class Meta(BaseMeta):
-        verbose_name = "附件"
-        verbose_name_plural = "附件"
+# class ProductRequirementAttachment(InlineModel):
+#     product_requirement = models.ForeignKey(Requirement, verbose_name='所属需求',
+#                                             related_name="%(app_label)s_%(class)s_product_requirement", **NULLABLE_FK)
+#
+#     file = models.FileField('附件', upload_to='uploads/')
+#
+#     class Meta(BaseMeta):
+#         verbose_name = "附件"
+#         verbose_name_plural = "附件"
 
 
 class Task(BaseModel, WithProject, WithAssignee, WithLevel, WithStartEndDate):
@@ -161,12 +161,12 @@ class Task(BaseModel, WithProject, WithAssignee, WithLevel, WithStartEndDate):
         verbose_name = "任务"
         verbose_name_plural = "任务"
 
-
-class TaskAttachment(InlineModel):
-    task = models.ForeignKey(Task, verbose_name='所属任务', related_name="%(app_label)s_%(class)s_task", **NULLABLE_FK)
-
-    file = models.FileField('附件', upload_to='uploads/')
-
-    class Meta(BaseMeta):
-        verbose_name = "附件"
-        verbose_name_plural = "附件"
+#
+# class TaskAttachment(InlineModel):
+#     task = models.ForeignKey(Task, verbose_name='所属任务', related_name="%(app_label)s_%(class)s_task", **NULLABLE_FK)
+#
+#     file = models.FileField('附件', upload_to='uploads/')
+#
+#     class Meta(BaseMeta):
+#         verbose_name = "附件"
+#         verbose_name_plural = "附件"

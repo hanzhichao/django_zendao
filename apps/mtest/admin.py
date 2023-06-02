@@ -1,21 +1,19 @@
 from django.contrib import admin
 
+from msystem.admin import AttachmentInline
 from . import models
-from utils.admin_utils import BaseAdmin, BaseTabularInline, BaseRecordAdmin, short_description
+from utils.admin_utils import BaseAdmin, BaseTabularInline, BaseRecordAdmin
 
 
 @admin.register(models.Bug)
 class BugAdmin(BaseAdmin):
     admin_order = 1
     list_display = ('id', 'name', 'level', 'severity', 'status', 'creator', 'assignee')
-    list_display_links = ('name', )
+    list_display_links = ('name',)
     list_filter = ('level', 'severity', 'status', 'creator', 'assignee')
 
-    class TestAttachmentInline(BaseTabularInline):
-        model = models.TestAttachment
-        exclude = ('test_case',)
 
-    inlines = [TestAttachmentInline]
+    inlines = [AttachmentInline]
 
     fields = (('product', 'product_module', 'project', 'related_release'),
               ('name', 'severity', 'level', 'assignee'),
@@ -31,17 +29,13 @@ class BugAdmin(BaseAdmin):
 @admin.register(models.TestCase)
 class TestCaseAdmin(BaseAdmin):
     admin_order = 2
-    list_display = ('level', 'product', 'name', 'type', 'creator', 'operations')
+    list_display = ('name', 'level', 'product',  'type', 'creator', 'operations')
 
     class TestStepInline(BaseTabularInline):
         model = models.TestStep
 
-    class TestAttachmentInline(BaseTabularInline):
-        model = models.TestAttachment
-        exclude = ('bug',)
-
-    inlines = [TestStepInline, TestAttachmentInline]
-    fields = (('product',  'product_module'),
+    inlines = [TestStepInline, AttachmentInline]
+    fields = (('product', 'product_module'),
               ('type', 'stage', 'related_requirement'),
               ('name', 'level'),
               'pre_condition',
