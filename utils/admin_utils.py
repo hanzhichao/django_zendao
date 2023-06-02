@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 from django.urls import path
@@ -42,6 +44,8 @@ class BaseAdmin(ImportExportModelAdmin, BASE_MODEL_ADMIN):
     obj_operation_urls = []  # ('/run, '运行')
     obj_operation_sep = ' '
 
+    actions = ['copy_objs']
+
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
@@ -79,10 +83,41 @@ class BaseAdmin(ImportExportModelAdmin, BASE_MODEL_ADMIN):
         link = self.obj_operation_sep.join(operation_urls)
         return mark_safe(link)
 
-    @short_description('运行')
+    @admin.action(description='运行')
     def run(self, obj):
         if hasattr(obj, 'run'):
             getattr(obj, 'run')()
+
+    @admin.display(description='优先级')
+    def colored_priority(self, obj):
+        colors_map = {
+            'blocker': 'purple',
+            'critical': 'red',
+            'major': 'orange',
+            'minor': 'blue',
+            'trivial': 'grey',
+        }
+        color = colors_map.get(obj.priority, 'black')
+        return mark_safe(
+            '<span style="color: {};">{}</span>'.format(color, (obj.get_priority_display() or '-'))
+        )
+
+    @admin.action(description='复制')
+    def copy_objs(self, request, queryset):
+        for obj in queryset:
+            obj.id = None
+            obj.name = obj.name + '_复制'
+            obj.save()
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        # pprint(actions)
+        # actions = list(actions) + ['copy_objs']
+        # if 'copy_objs' not in actions:
+            # actions['copy_objs'] = self.copy_objs
+        # if 'delete_selected' in actions:
+        #     del actions['delete_selected']
+        return actions
 
 class BaseTabularInline(BASE_TABULAR_INLINE):
     extra = 0

@@ -10,6 +10,9 @@ from utils.admin_utils import BaseAdmin, BaseTabularInline, BaseRecordAdmin
 class TestCaseAdmin(BaseAdmin):
     admin_order = 2
     list_display = ('name', 'level', 'product', 'type', 'creator', 'operations')
+    list_editable = ('level', )
+    list_filter = ('level', 'type', 'creator', 'product')
+
 
     class TestStepInline(BaseTabularInline):
         model = models.TestStep
@@ -27,10 +30,10 @@ class TestCaseAdmin(BaseAdmin):
 @admin.register(models.TestPlan)
 class TestPlanAdmin(BaseAdmin):
     admin_order = 3
-    list_display = ('name', 'manager', 'start_date', 'end_date', 'status', 'operations')
+    list_display = ('name', 'manager', 'start_date', 'end_date', 'level', 'status', 'operations')
     # fields = ('project', 'related_release', 'manager', 'level', ('start_date', 'end_date'), 'status',
     #           'name', 'description', 'test_summary', 'cc_to')
-
+    list_filter = ('related_release', 'project', 'level', 'status', 'manager')
     fieldsets = [
         (
             None,
