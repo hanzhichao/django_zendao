@@ -30,7 +30,7 @@ class ProductAdmin(BaseAdmin):
     def requirements_num(self, obj):
         return obj.mproject_requirement_product.count()
 
-    inlines = [ProductPlanInline, ProductModuleInline]
+    inlines = [ProductModuleInline, ProductPlanInline, ]
     fields = (
         'name', 'key', ('product_manager', 'test_manager', 'release_manager'), 'type', 'description', 'view_control')
 
@@ -58,7 +58,6 @@ class ProductVersionAdmin(BaseAdmin):
 
         model = models.ProductRelease
         inlines = [ReleasePackageInline]
-
 
 
     list_filter = ('product', 'builder')

@@ -1,7 +1,7 @@
 from django.db import models
 
 from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithLevel, WithTags, WithKey,
-                               WithManager, WithWatchers, WithStatus,WithStage, WithImage, WithUrl, WithStartEndDate,
+                               WithManager, WithWatchers, WithStatus, WithStage, WithImage, WithUrl, WithStartEndDate,
                                WithParent, WithAssignee, WithType, NULLABLE_FK
                                )
 from django.conf import settings
@@ -60,8 +60,8 @@ class WithProduct(models.Model):
 
 class ProductModule(InlineModel, WithProduct, WithParent):
     class Meta(BaseMeta):
-        verbose_name = "产品模块"
-        verbose_name_plural = "产品模块"
+        verbose_name = "模块"
+        verbose_name_plural = "模块"
 
 
 class WithProductModule(WithProduct):
@@ -72,9 +72,7 @@ class WithProductModule(WithProduct):
         abstract = True
 
 
-
 class ProductVersion(BaseModel, WithProduct):
-
     builder = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="%(app_label)s_%(class)s_builder",
@@ -104,8 +102,10 @@ class ProductRelease(InlineModel):
 
 
 class ReleasePackage(InlineModel):
-    product_version = models.ForeignKey(ProductVersion, verbose_name='所属版本', related_name="%(app_label)s_%(class)s_product_version", **NULLABLE_FK)
-    product_release = models.ForeignKey(ProductRelease, verbose_name='所属发布', related_name="%(app_label)s_%(class)s_product_release", **NULLABLE_FK)
+    product_version = models.ForeignKey(ProductVersion, verbose_name='所属版本',
+                                        related_name="%(app_label)s_%(class)s_product_version", **NULLABLE_FK)
+    product_release = models.ForeignKey(ProductRelease, verbose_name='所属发布',
+                                        related_name="%(app_label)s_%(class)s_product_release", **NULLABLE_FK)
 
     file = models.FileField('发行包', upload_to='uploads/')
 
@@ -114,9 +114,7 @@ class ReleasePackage(InlineModel):
         verbose_name_plural = "发行包"
 
 
-
 class ProductPlan(InlineModel, WithProduct, WithStartEndDate):
     class Meta(BaseMeta):
-        verbose_name = "迭代"
-        verbose_name_plural = "迭代"
-
+        verbose_name = "计划"
+        verbose_name_plural = "计划"

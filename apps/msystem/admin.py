@@ -78,7 +78,6 @@ admin.site.register(User, MyUserAdmin)
 
 
 
-
 class AttachmentInline(GenericTabularInline):
     model = Attachment
     exclude = ('creator', 'operator')

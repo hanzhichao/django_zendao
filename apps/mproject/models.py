@@ -6,7 +6,7 @@ from utils.field_utils import RichTextField
 from utils.model_utils import (BaseModel, BaseMeta, InlineModel, WithLevel, WithStartEndDate, WithAssignee, NULLABLE_FK,
                                WithStage, WithTags
                                )
-from mproduct.models import Product, ProductModule, WithProduct, WithProductModule, ProductPlan
+from mproduct.models import Product, ProductModule, WithProduct, WithProductModule, ProductPlan, ProductRelease
 
 
 class Project(BaseModel, WithStartEndDate):
@@ -161,12 +161,57 @@ class Task(BaseModel, WithProject, WithAssignee, WithLevel, WithStartEndDate):
         verbose_name = "任务"
         verbose_name_plural = "任务"
 
-#
-# class TaskAttachment(InlineModel):
-#     task = models.ForeignKey(Task, verbose_name='所属任务', related_name="%(app_label)s_%(class)s_task", **NULLABLE_FK)
-#
-#     file = models.FileField('附件', upload_to='uploads/')
-#
-#     class Meta(BaseMeta):
-#         verbose_name = "附件"
-#         verbose_name_plural = "附件"
+class Bug(BaseModel, WithProductModule, WithProject, WithAssignee, WithTags, WithLevel):
+    BUG_TYPE_CHOICES = (('code', '代码错误'),
+                     ('ui', '界面优化'),
+                     ('design', '设计缺陷'),
+                     ('conf', '配置相关'),
+                     ('deploy', '安装部署'),
+                     ('secure', '安全相关'),
+                     ('performance', '性能问题'),
+                     ('standard', '标准规范'),
+                     ('test_script', '测试脚本'),
+                     ('else', '其他'))
+    PLATFORM_CHOICES = (
+        ('win10', 'Windows 10'),
+        ('win7', 'Windows 7'),
+        ('mac', 'MacOS'),
+        ('centos', 'CentOS'),
+        ('ubuntu', 'ubuntu'),
+    )
+    BUG_STATUS_CHOICES = (
+        ('new', '打开'),
+        ('resolved', '已解决'),
+        ('closed', '已关闭'),
+    )
+
+    BROWSER_CHOICES = (
+        ('chrome', 'Chrome'),
+        ('edge', 'Edge'),
+        ('360', '360'),
+        ('firefox', 'firefox'),
+        ('ie', 'IE'),
+    )
+    SEVERITY_CHOICES = ((0, '0️⃣'), (1, '1️⃣'), (2, '2️⃣'), (3, '3️⃣'), (4, '4️⃣'), (5, '5️⃣'))
+    severity = models.PositiveSmallIntegerField('严重等级', choices=SEVERITY_CHOICES, default=2)
+
+    type = models.CharField('缺陷类型', max_length=20, choices=BUG_TYPE_CHOICES, default='code')
+    status = models.CharField('状态', max_length=20, choices=BUG_STATUS_CHOICES, default='new')
+    platform = models.CharField('操作系统', max_length=20, choices=PLATFORM_CHOICES, default='win10')
+    browser = models.CharField('浏览器', max_length=20, choices=BROWSER_CHOICES, default='chrome')
+
+    related_release = models.ForeignKey(ProductRelease, verbose_name='影响版本',
+                                        related_name="%(app_label)s_%(class)s_related_release", **NULLABLE_FK)
+    related_requirement = models.ForeignKey(Requirement, verbose_name='关联需求',
+                                            related_name="%(app_label)s_%(class)s_related_requirement", **NULLABLE_FK)
+    related_task = models.ForeignKey(Task, verbose_name='关联任务',
+                                            related_name="%(app_label)s_%(class)s_related_requirement", **NULLABLE_FK)
+    cc_to = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                   related_name="%(app_label)s_%(class)s_cc_to", verbose_name="抄送给", blank=True)
+
+    class Meta(BaseMeta):
+        verbose_name = "缺陷"
+        verbose_name_plural = "缺陷"
+
+    def __str__(self):
+        return ''

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django import forms
 from django.contrib.auth.models import User
+from extra_settings.models import Setting
 
 from msystem.admin import AttachmentInline
 from utils.field_utils import UserChoiceField
@@ -63,18 +64,39 @@ class RequirementAdmin(BaseAdmin):
 
     list_display = (
         'id', 'name', 'level', 'product_plan', 'source', 'assignee', 'estimated_time', 'status', 'stage', 'operations')
-    list_filter = ('product', 'product_module', 'status', 'stage', 'assignee', 'reviewer')
+    list_filter = ('product_module', 'product_plan', 'status', 'stage', 'assignee', 'reviewer')
     search_fields = ('name',)
     inlines = [AttachmentInline]
     readonly_fields = ('status',)
-    fields = (('product', 'product_module', 'product_plan',),
-              ('name',  'source', 'level', 'estimated_time'),
-              ('status', 'stage', 'assignee', 'reviewer', 'no_need_review'),
-              'description',
-              'acceptance_criteria',
-              'tags',
-              'cc_to',
-              )
+    # fields = (('product', 'product_module', 'product_plan',),
+    #           ('name',  'source', 'level', 'estimated_time'),
+    #           ('status', 'stage', 'assignee', 'reviewer', 'no_need_review'),
+    #           'description',
+    #           'acceptance_criteria',
+    #           'tags',
+    #           'cc_to',
+    #           )
+
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": (('product', 'product_module', 'product_plan',),
+                           ('name', 'source', 'level',),
+                           ('stage', 'assignee', 'estimated_time'),
+                           ('reviewer', 'no_need_review'),
+                           'description',)
+            },
+        ),
+        (
+            "其他",
+            {
+                "classes": ["collapse"],
+                "fields": ["tags", "acceptance_criteria", 'cc_to'],
+            },
+        ),
+    ]
+
     filter_horizontal = ('cc_to',)
 
 
@@ -82,12 +104,83 @@ class RequirementAdmin(BaseAdmin):
 class TaskAdmin(BaseAdmin):
     admin_order = 3
 
-
     inlines = [AttachmentInline]
 
     list_display = ('level', 'name', 'status', 'end_date', 'assignee')
-    fields = (
-        ('project', 'product_module'), 'name', ('assignee', 'level'), ('type', 'status'), ('start_date', 'end_date'),
-        'description', 'cc_to')
+    list_filter = ('level', 'assignee', 'type')
+
     filter_horizontal = ('cc_to',)
 
+    # fields = (
+    #     ('project', 'product_module'), 'name', ('assignee', 'level'), ('type', 'status'), ('start_date', 'end_date'),
+    #     'description', 'cc_to')
+
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": (('project', 'product_module'), 'name', ('assignee', 'level'), ('type', 'status'),
+                           ('start_date', 'end_date')),
+            },
+        ),
+        (
+            "其他",
+            {
+                "classes": ["collapse"],
+                "fields": ['cc_to'],
+            },
+        ),
+    ]
+
+@admin.register(models.Bug)
+class BugAdmin(BaseAdmin):
+    admin_order = 1
+    list_display = ('id', 'name', 'level', 'severity', 'status', 'creator', 'assignee')
+    list_display_links = ('name',)
+    list_filter = ('level', 'severity', 'status', 'creator', 'assignee')
+
+    inlines = [AttachmentInline]
+
+    # fields = (('product', 'product_module', 'project', 'related_release'),
+    #           ('name', 'severity', 'level', 'assignee'),
+    #           ('type', 'platform', 'browser'),
+    #           ('related_requirement', 'related_task'),
+    #           'tags',
+    #           'description',
+    #           'cc_to'
+    #           )
+
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": ('name',
+                           ('severity', 'level'),
+                           ('project', 'assignee'),
+                           ('product', 'product_module', 'related_release'),
+                           ('type', 'platform', 'browser'),
+                           'description',)
+            },
+        ),
+        (
+            "其他",
+            {
+                "classes": ["collapse"],
+                "fields": [
+                    ('related_requirement', 'related_task'),
+                    "tags", 'cc_to'],
+            },
+        ),
+    ]
+    filter_horizontal = ('cc_to',)
+
+    def formfield_for_choice_field(self, db_field, request, **kwargs):
+
+        if db_field.name == "severity":
+            value = Setting.get("BUG_SEVERITY")
+            if value:
+                choices = list(zip(range(len(value)), value))
+            kwargs['choices'] = choices
+            # if request.user.is_superuser:
+            #     kwargs['choices'] += (('ready', 'Ready for deployment'),)
+        return super().formfield_for_choice_field(db_field, request, **kwargs)
